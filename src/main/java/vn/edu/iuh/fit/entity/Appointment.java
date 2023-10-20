@@ -1,4 +1,4 @@
-package vn.edu.iuh.fit;
+package vn.edu.iuh.fit.entity;
 
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.Column;
@@ -23,6 +23,10 @@ public class Appointment {
     private LocalDateTime apptEnd;
 
     public Appointment() {
+    }
+
+    public Appointment(long apptNo) {
+        this.apptNo = apptNo;
     }
 
     public Appointment(long apptNo, LocalDateTime apptStart, LocalDateTime apptEnd) {
