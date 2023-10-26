@@ -5,10 +5,10 @@ import jakarta.persistence.ConstructorResult;
 import jakarta.persistence.SqlResultSetMapping;
 
 @SqlResultSetMapping(
-        name="ServicePrice",
+        name="ServicePriceDTO",
         classes = {
                 @ConstructorResult(
-                        targetClass = ServicePrice.class,
+                        targetClass = ServicePriceDTO.class,
                         columns = {
                                 @ColumnResult(name = "ServiceID", type = Long.class),
                                 @ColumnResult(name = "ServiceName", type = String.class),
@@ -21,17 +21,17 @@ import jakarta.persistence.SqlResultSetMapping;
         }
 
 )
-public class ServicePrice {
+public class ServicePriceDTO {
     private long svcID;
     private String svcName;
     private String des;
     private int status;
     private double price;
 
-    public ServicePrice() {
+    public ServicePriceDTO() {
     }
 
-    public ServicePrice(long svcID, String svcName, String des, int status, double price) {
+    public ServicePriceDTO(long svcID, String svcName, String des, int status, double price) {
         this.svcID = svcID;
         this.svcName = svcName;
         this.des = des;

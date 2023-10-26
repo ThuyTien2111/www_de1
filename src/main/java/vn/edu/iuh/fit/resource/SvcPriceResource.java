@@ -6,6 +6,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import vn.edu.iuh.fit.convert.ServicePriceDTO;
 import vn.edu.iuh.fit.dao.ServicePriceDao;
 import vn.edu.iuh.fit.entity.Service;
 import vn.edu.iuh.fit.service.SvcPriceService;
@@ -24,7 +25,7 @@ public class SvcPriceResource {
     @GET
     @Path("/getCheapestPrice")
     public Response getCheapestPrice(){
-        List<Service> rs=svcPriceService.getCheapestPrice();
+        List<ServicePriceDTO> rs=svcPriceService.getCheapestPrice();
         if(rs!=null){
             return Response.ok(rs).build();
         }else {

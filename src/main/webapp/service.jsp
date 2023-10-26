@@ -2,7 +2,8 @@
 <%@ page import="vn.edu.iuh.fit.service.SvcService" %>
 <%@ page import="java.util.List" %>
 <%@ page import="vn.edu.iuh.fit.entity.Service" %>
-<%@ page import="vn.edu.iuh.fit.service.SvcPriceService" %><%--
+<%@ page import="vn.edu.iuh.fit.service.SvcPriceService" %>
+<%@ page import="vn.edu.iuh.fit.convert.ServicePriceDTO" %><%--
   Created by IntelliJ IDEA.
   User: my
   Date: 20/10/2023
@@ -20,6 +21,9 @@
 <body>
 <div class="container">
     <h2>Danh sách dịch vụ</h2>
+    <a href="cheapest-service.jsp" class="btn btn-warning">Dịch vụ giá rẻ ?</a>
+    <a href="survey.jsp" class="btn btn-info">Khảo sát số lượt book</a>
+    <p></p>
     <table class="table">
         <thead>
         <tr>
@@ -31,16 +35,15 @@
         </thead>
         <tbody>
         <%
-            SvcService service=new SvcService();
-            List<Service> services=service.getAllService();
             SvcPriceService svcPriceService=new SvcPriceService();
+            List<ServicePriceDTO> services=svcPriceService.getServicePrice();
             //Phân trang
             int pageSize = 5; // Số công việc trên mỗi trang
             int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
             int startIndex = (currentPage - 1) * pageSize;
             int endIndex = Math.min(startIndex + pageSize, services.size());
-            List<Service> svcOnPage = services.subList(startIndex, endIndex);
-            for (Service s:svcOnPage) {
+            List<ServicePriceDTO> svcOnPage = services.subList(startIndex, endIndex);
+            for (ServicePriceDTO s:svcOnPage) {
                 String status="";
                 if(s.getStatus()==0){
                     status="STOPED";
@@ -49,18 +52,18 @@
                 } else if (s.getStatus()==2) {
                     status="TERMINATED";
                 }
-                //Xử lý giá
-                String price= String.valueOf(svcPriceService.getPrice(s.getSvcId()));
+
         %>
         <tr>
             <td><%=s.getSvcName()%></td>
-            <td><%=s.getSvcDesc()%></td>
+            <td><%=s.getDes()%></td>
             <td><%=status%></td>
-            <td><%=price%></td>
+            <td><%=s.getPrice()%></td>
             <td>
-                <a href="serviceControl?action=update&svcID=<%=s.getSvcId()%>" class="btn btn-warning">Sửa</a>
-                <a href="serviceControl?action=delete&svcID=<%=s.getSvcId()%>" class="btn btn-danger">Xóa</a>
-                <a href="serviceControl?action=active&svcID=<%=s.getSvcId()%>" class="btn btn-info">Active</a>
+                <a href="serviceControl?action=update&svcID=<%=s.getSvcID()%>" class="btn btn-warning">Sửa</a>
+                <a href="serviceControl?action=delete&svcID=<%=s.getSvcID()%>" class="btn btn-danger">Xóa</a>
+                <a href="serviceControl?action=active&svcID=<%=s.getSvcID()%>" class="btn btn-info">Active</a>
+                <a href="invoiceControl?action=addInvoice&svcID=<%=s.getSvcID()%>" class="btn btn-success">Đặt lịch</a>
             </td>
         </tr>
         <%
@@ -82,6 +85,7 @@
         %>
     </ul>
     <a href="add-service.jsp" class="btn btn-primary">Thêm dịch vụ</a>
+
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

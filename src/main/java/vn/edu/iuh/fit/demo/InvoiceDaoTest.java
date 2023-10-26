@@ -11,7 +11,9 @@ public class InvoiceDaoTest {
     public static void main(String[] args) {
         InvoiceDao invoiceDao= new InvoiceDao();
 //        System.out.println(invoiceDao.add(new Invoice(new Appointment(2), new Service(4), 1,2)));
-        System.out.println(invoiceDao.calcTotalPrice(10));
+//        System.out.println(invoiceDao.calcTotalPrice(10));
+//        invoiceDao.getInvoiceByApptNo(2).forEach(i->System.out.println(i.toString()));
+        System.out.println(invoiceDao.paidInvoice(3, 5));
 
     }
 }

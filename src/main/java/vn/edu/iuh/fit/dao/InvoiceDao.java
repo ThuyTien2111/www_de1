@@ -10,6 +10,7 @@ import vn.edu.iuh.fit.entity.Service;
 import vn.edu.iuh.fit.entity.ServicePrice;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceDao {
@@ -40,6 +41,8 @@ public class InvoiceDao {
             invoice.setInvDate((LocalDateTime.now()));
             //mac dinh hoa don moi tao co status 1
             invoice.setStatus(1);
+            //xử lý appt
+            manager.merge(invoice.getAppointment());
             //them invoice
             manager.persist(invoice);
             tr.commit();
@@ -59,7 +62,7 @@ public class InvoiceDao {
             else {
                 String sql = "SELECT SUM(Price*TIMESTAMPDIFF(MINUTE, appointment.Start, appointment.End) / 60.0) AS totalPrice FROM invoice\n" +
                         "INNER JOIN appointment ON appointment.ApptNo=invoice.ApptNo\n" +
-                        "WHERE invoice.ApptNo=?";
+                        "WHERE invoice.ApptNo=? AND (invoice.Status=1 OR invoice.Status=2)";
                 Query query = manager.createNativeQuery(sql); //lay class cua double la se lỗi
                 query.setParameter(1, apptNo);
                 rs=Double.parseDouble(query.getSingleResult().toString());
@@ -70,5 +73,61 @@ public class InvoiceDao {
             tr.rollback();
         }
         return rs;
+    }
+    public List<Invoice> getInvoiceByApptNo(long apptNo){
+        List<Invoice> list=new ArrayList<>();
+        EntityTransaction tr= manager.getTransaction();
+        tr.begin();
+        try {
+            String sql="SELECT * FROM invoice\n" +
+                    "WHERE ApptNo=?";
+            Query query=manager.createNativeQuery(sql, Invoice.class);
+            query.setParameter(1, apptNo);
+            list=query.getResultList();
+            tr.commit();
+        }catch (Exception e){
+            tr.rollback();
+        }
+        return list;
+    }
+    public boolean paidInvoice(long apptNo, long svcID){
+        EntityTransaction tr= manager.getTransaction();
+        tr.begin();
+        try {
+            String sql="\n" +
+                    "UPDATE invoice\n" +
+                    "SET status = 2\n" +
+                    "WHERE ((ApptNo = ?) \n" +
+                    "AND (serviceID = ?))";
+            Query query=manager.createNativeQuery(sql);
+            query.setParameter(1, apptNo);
+            query.setParameter(2, svcID);
+            int rowsUpdated = query.executeUpdate();
+            tr.commit();
+            return rowsUpdated>0;
+        }catch (Exception e){
+            tr.rollback();
+        }
+        return false;
+    }
+    public boolean cancelInvoice(long apptNo, long svcID){
+        EntityTransaction tr= manager.getTransaction();
+        tr.begin();
+        try {
+            String sql="\n" +
+                    "UPDATE invoice\n" +
+                    "SET status = 0\n" +
+                    "WHERE ((ApptNo = ?) \n" +
+                    "AND (serviceID = ?))";
+            Query query=manager.createNativeQuery(sql);
+            query.setParameter(1, apptNo);
+            query.setParameter(2, svcID);
+            int rowsUpdated = query.executeUpdate();
+            tr.commit();
+            return rowsUpdated>0;
+        }catch (Exception e){
+            tr.rollback();
+        }
+        return false;
     }
 }
